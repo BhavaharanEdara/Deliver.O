@@ -1,0 +1,1 @@
+export const base_url = "https://e-commerce-dniv.onrender.com"

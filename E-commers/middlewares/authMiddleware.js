@@ -13,6 +13,9 @@ const isLoggedin = asyncHandler(async(req, res, next)=>{
                 req.user = user;
                 next();
             }
+            else{
+                throw new Error('Token expired login again');
+            }
         }catch(error){
             throw new Error('Token expired login again');
         }

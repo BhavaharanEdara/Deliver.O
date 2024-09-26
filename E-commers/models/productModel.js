@@ -45,7 +45,10 @@ var productSchema = new mongoose.Schema({
         star: Number,
         postedby:{type:mongoose.Schema.Types.ObjectId, ref:"User"},
         comment : String,
-        postedOn : Date,
+        postedOn : {
+            type:Date,
+            default: Date.now
+        },
         firstname:String,
         lastname:String,
     }],

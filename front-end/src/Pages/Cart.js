@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getCart } from '../Features/cart/CartSlice';
 import axios from 'axios';
 import { base_url } from '../Utils/base_url';
+
+
 function Cart() {
   const dispatch = useDispatch();
   const [products,SetProducts] =useState([]);
@@ -34,12 +36,12 @@ function Cart() {
   return (
     <div className='bg-green-100'>
       {products.length!==0 ? <><div className='bg-white rounded-lg'>
-        <h1 className='font-medium text-lg pl-[2.5%]'>Products</h1>
+        <h1 className='font-medium text-base md:text-lg pl-[2.5%]'>Products</h1>
             {products.map((ele)=>{
               return <CartItem data={ele} change={SetProducts}/>
             })}
       </div>
-      <div className='bg-green-100 p-[3%]'>
+      <div className='bg-green-100 p-4 md:p-[3%]'>
           <div className='flex items-start mt-5 justify-between'>
             <Link to="/products"className='text-white rounded-full text-center font-semibold bg-gray-800 px-5 py-2 my-3 ml-[2%] border-2 border-gray-600 hover:bg-white hover:text-gray-800 ' >Continue Shopping</Link>
             <div className='flex flex-col justify-end mr-[2%] '>

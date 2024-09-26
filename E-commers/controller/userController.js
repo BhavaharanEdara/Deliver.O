@@ -91,7 +91,7 @@ const getAUser = asyncHandler(async(req, res)=>{
     try{
         const{id} = req.params;
         const getUser = await User.findById({_id:id});
-        res.json(getUser);
+        res.send(getUser);
     }catch(error){
         throw new Error(error);
     }
@@ -136,7 +136,6 @@ const handleRefreshToken = asyncHandler(async (req, res)=>{
     if(!user) throw Error("No token in db");
     jwt.verify(refreshToken,process.env.refresh_KEY, (err, decode)=>{
         if(err|| user.id!==decode.id){
-            console.log(err);
             throw new Error("wrong refreshtoken");
         }
         const accessToken = generateToken(user._id);
@@ -193,7 +192,7 @@ const forgotPasswordToken = asyncHandler(async(req,res)=>{
     try{
         const token = await user.createResetPasswordToken();
         await user.save();
-        const resetURL = `Hi please follow this link to reset Password link valid for 10 mins <a href='http://localhost:5000/api/user/reset-password/${token}'>Click Here</a>`;
+        const resetURL = `Hi please follow this link to reset Password link valid for 10 mins <a href='http://localhost:3000/updatePassword/${token}'>Click Here</a>`;
         const data = {
             to: email,
             subject:"Forget Password Link",
@@ -371,7 +370,6 @@ const createOrder = asyncHandler(async (req,res)=>{
             address:address,
             phoneNumber:phoneNumber
         }).save();
-        console.log(newOrder.PaymentIntent)
         let update = userCart.Products.map((item) => {
             return {
               updateOne: {

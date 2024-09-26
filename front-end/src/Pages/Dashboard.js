@@ -59,12 +59,12 @@ const [monthlyData, setMonthlyData] = useState([
   const getOrders = async()=>{
     const response = await axios.get(`${base_url}/order/getOrders`, config);
     const responseOrder = await response.data.map((ele,ind)=>{
-      return {key:ind+1, status:ele.orderStatus, orderBy:ele.orderBy, address: ele.address, total:ele.PaymentIntent.amount, date:ele.PaymentIntent.created}
+      return {key:ind+1, status:ele?.orderStatus, orderBy:ele?.orderBy, address: ele?.address, total:ele.PaymentIntent?.amount, date:ele.PaymentIntent?.created}
     }); 
     const cumulativeData = [...monthlyData];
     await response.data.forEach((order) => {
       const monthIndex = new Date(order.PaymentIntent.created).getMonth() + 1;
-      cumulativeData[monthIndex][1] += parseInt(order.PaymentIntent.amount,10);
+      cumulativeData[monthIndex][1] += parseInt(order.PaymentIntent?.amount,10);
     });
     setMonthlyData(cumulativeData);
     setOrders(responseOrder)
@@ -76,7 +76,7 @@ const [monthlyData, setMonthlyData] = useState([
   return (
     <div className='p-7'>
       <h3 className='font-semibold text-2xl py-5'>Dashboard</h3>
-      <div className='flex justify-between w-full gap-3'>
+      {/**<div className='flex justify-between w-full gap-3'>
         <div className='bg-white p-4 flex justify-between items-end flex-grow rounded-md shadow-lg '>
             <div ><p className='text-base font-[450]'>Total :</p><h3 className='text-3xl'>$1100</h3></div>
             <div className='text'>
@@ -107,9 +107,9 @@ const [monthlyData, setMonthlyData] = useState([
               <p>Compared to April</p>
             </div>
         </div>
-      </div>
+      </div>**/}
       <div>
-      <h3 className='font-semibold text-2xl py-5'>Income Stats</h3>
+      <h3 className='font-semibold text-2xl py-5 text-center'>Income Stats</h3>
       <div className='bg-white shadow-lg p-5'>
       <Chart
         chartType="Bar"

@@ -21,7 +21,22 @@ import Addcolor from "./Pages/Addcolor"
 import Customers from "./Pages/Customers"
 import SingleCustomer from "./Pages/SingleCustomer"
 import ProductList from "./Pages/product-list"
+import UpdatePassword from './Pages/UpdatePassword'
+import {useDispatch} from "react-redux"
+import { useEffect } from "react"
+import {setUser} from "./Features/auth/AuthSlice"
+import { getCart } from "./Features/cart/CartSlice"
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      dispatch(setUser(JSON.parse(storedUser)));
+      dispatch(getCart(storedUser?.findUser?._id));
+    }
+  }, [dispatch]); 
+
   return (
     <>
       <BrowserRouter>
@@ -38,6 +53,7 @@ function App() {
             <Route path='/profile' element={<Profile/>}/>
             <Route path='/signup' element={<SignUp/>}/>
             <Route path='/forgotpassword' element={<ForgotPassword/>}/>
+            <Route path='/updatePassword/:token' element={<UpdatePassword/>}/>
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/checkout/:amount' element={<Checkout/>}/>
           </Route>

@@ -25,7 +25,6 @@ function Products() {
     const [selectColor, setSelectColor] = useState("");
     const user = JSON.parse(localStorage.getItem("user"));
     const navigate = useNavigate();
-    const [wishlist,setWishlist] = useState(user?.findUser?.wishlist);
     const [viewFilter, setViewFilter] = useState(false);
 
     const getProducts = async()=>{
@@ -100,7 +99,6 @@ function Products() {
             setProducts(productResponse?.data?.products);
             handeApplied();
         }
-        console.log(productResponse);
         
     }
     const handleSort= async(ele)=>{
@@ -138,14 +136,17 @@ function Products() {
             <p>Applied <span className='text-yellow-300 font-bold '>!</span></p>
         </div>
         
-        <div className='mx-[2%] ml-[2%] pt-[3%] bg-green-100 w-1/5 hidden md:block'>
+        <div className='mx-[1%] lg:mx-[2%] ml-[2%] pt-[3%] bg-green-100 w-1/5 hidden md:block'>
             <div className='p-5 bg-white  leading-6 rounded-lg'>
                 <h3 className="text-[120%] font-semibold leading-6">Shop by category</h3>
                 <div>
                     <ul className='text-[90%] font-medium font-sans pt-1 leading-7 pl-[2%] text-gray-600'>
                         {categories?.map((ele)=>{return(<Link key={ele._id} to={`/products/${encodeURI(ele.name)}`} onClick={()=>{setPage(1);}}><li className={`${searchKey===ele.name ? 'text-black px-1 bg-gray-100 w-fit rounded-md':''}`} key={ele._id}>{ele.name}</li></Link>)})}
                     </ul>
-                    <div><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div></div>
+
+                    <div className='flex gap-2'><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div>
+                    <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
+                    </div>
                 </div>
             </div>
             <div className='p-5 bg-white mt-[10%] rounded-lg' >
@@ -162,7 +163,6 @@ function Products() {
                             <label className='ml-2'>Out of stock</label>
                         <div/>
                     </div>
-                    <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
                     <h5 className='text-[90%] font-semibold pt-3 pl-1'>Price</h5>
                     <div className='flex pt-4 ml-1 justify-between items-end'>
                         <div className='border-2 border-zinc-400 w-1/2 rounded-sm'>
@@ -172,7 +172,6 @@ function Products() {
                             <input className='w-full text-black  outline-none p-1 placeholder:italic placeholder:text-sm placeholder:font-medium placeholder:text-gray-700' type="number" value={priceTo} onChange={(ele)=>{handlePriceToChange(ele)}} placeholder='To'/>
                         </div>
                     </div>
-                    <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Filter</div>
                     <h5 className='text-[90%] font-semibold pt-5 pl-1'>Colours</h5>
                     <div className=''>
                         <div className='flex flex-wrap mt-2 gap-1'>
@@ -185,6 +184,9 @@ function Products() {
                         })}
                         </div>
                     </div>
+
+                    <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
+
                 </div>
             </div>
             <div className='p-5 bg-white  mt-[10%] rounded-lg'>
@@ -194,7 +196,9 @@ function Products() {
                         return(<Link key={ele._id} to={`/products/${encodeURI(ele.name)}`} onClick={()=>{setPage(1)}}><p className={`${searchKey===ele.name ? 'bg-green-500 text-white': ""} bg-green-100 text-green-700 font-semibold rounded-md p-1 text-sm hover:bg-green-500 hover:text-white`} key={ele?._id}>{ele.name}</p></Link>)
                     })}
                 </div>
-                <div><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div></div>
+                <div className='flex gap-2'><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div>
+                <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
+                </div>
 
             </div>
         </div>
@@ -214,9 +218,9 @@ function Products() {
                 <div className='md:hidden p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{setViewFilter(true)}}>Filters</div>
             </div>
             <div className=''>
-                <div className=' md:flex md:flex-wrap items-start md:gap-x-[4%] lg:gap-x-[3%] xl:gap-x-[1.5%] gap-y-8 mt-[1%] mx-[2%] page-list'>
+                <div className=' md:flex md:flex-wrap items-start md:gap-x-[4%] lg:gap-x-[3%] xl:gap-x-[1.5%] gap-y-8 mt-[1%] mx-[1%] page-list'>
                     {products.map((element)=>{
-                        return <ProductCard data={element} key={element._id} wishlist={wishlist} setWishlist={setWishlist}/>
+                        return <ProductCard data={element} key={element._id} />
                     })}
                 </div>
             </div>
@@ -247,7 +251,10 @@ function Products() {
                     <ul className='text-[80%] flex gap-2 font-medium font-sans pt-1 leading-7 pl-[1%] text-gray-600'>
                         {categories?.map((ele)=>{return(<Link key={ele._id} to={`/products/${encodeURI(ele.name)}`} onClick={()=>{setPage(1);}}><li className={`${searchKey===ele.name ? 'text-black px-1 bg-gray-200 w-fit rounded-md':''} px-1 border-[1px] border-gray-400 rounded-2xl`} key={ele._id}>{ele.name}</li></Link>)})}
                     </ul>
-                    <div><div className='p-1 mx-1 w-fit my-1 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div></div>
+                    <div className='flex gap-2'><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div>
+                <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
+
+                    </div>
                 </div>
             </div>
             <div className='p-2 bg-white ' >
@@ -264,7 +271,6 @@ function Products() {
                             <label className='ml-2'>Out of stock</label>
                         <div/>
                     </div>
-                    <div className='p-1 mx-1 w-fit my-1 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
                     <h5 className='text-[90%] font-semibold pt-2 pl-1'>Price</h5>
                     <div className='flex pt-4 ml-1 justify-between items-end'>
                         <div className='border-2 border-zinc-400 w-1/2 rounded-sm'>
@@ -274,7 +280,6 @@ function Products() {
                             <input className='w-full text-black  outline-none p-1 placeholder:italic placeholder:text-sm placeholder:font-medium placeholder:text-gray-700' type="number" value={priceTo} onChange={(ele)=>{handlePriceToChange(ele)}} placeholder='To'/>
                         </div>
                     </div>
-                    <div className='p-1 mx-1 w-fit my-1 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Filter</div>
                     <h5 className='text-[90%] font-semibold pt-2 pl-1'>Colours</h5>
                     <div className=''>
                         <div className='flex flex-wrap gap-1'>
@@ -287,6 +292,10 @@ function Products() {
                         })}
                         </div>
                     </div>
+                    <div className='flex gap-2'><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div>
+                <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
+
+                    </div>
                 </div>
             </div>
             <div className='p-2 bg-white'>
@@ -296,9 +305,10 @@ function Products() {
                         return(<Link key={ele._id} to={`/products/${encodeURI(ele.name)}`} onClick={()=>{setPage(1)}}><p className={`${searchKey===ele.name ? 'bg-green-500 text-white': ""} bg-green-100 text-green-700 font-semibold rounded-md p-1 text-sm hover:bg-green-500 hover:text-white`} key={ele?._id}>{ele.name}</p></Link>)
                     })}
                 </div>
-                <div><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div></div>
+                <div className='flex gap-2'><div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>{navigate('/products')}}>Reset</div>
+                <div className='p-1 mx-1 w-fit my-2 text-xs font-semibold bg-blue-600 text-white rounded-sm hover:cursor-pointer' onClick={()=>manipulateProducts()} >Apply</div>
 
-            </div>
+                    </div>            </div>
             </div>
             </div>}
     </div>

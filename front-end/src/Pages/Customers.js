@@ -7,11 +7,17 @@ import { FaEdit } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
 function Customers() {
-  const [allCustomers, setAllCustomers] = useState([1,2,3]);
+  const [allCustomers, setAllCustomers] = useState([]);
 
   const deleteCustomer = async(ele)=>{
-    console.log(ele)
-    const response = await axios.delete(`${base_url}/auth/deleteUser/${ele._id}`,config);
+    
+    try{
+      const response = await axios.delete(`${base_url}/auth/profile/${ele._id}`,config);
+      setAllCustomers(allCustomers.filter(customer=>customer._id!=ele._id));
+    }
+    catch(error){
+      alert("Failed to delete")
+    }
   }
   const getCustomers = async()=>{
     const response = await axios.get(`${base_url}/auth/allUsers`,config);

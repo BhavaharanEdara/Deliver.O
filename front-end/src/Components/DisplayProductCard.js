@@ -13,11 +13,6 @@ function DisplayProductCard(props) {
       <div className=' px-2 rounded-xl  flex flex-col justify-between items-stretch relative '>
         <div className='flex flex-col items-center py-[2%] h-1/2 group'>
           <img src={props?.data?.img} alt='product Iamge' className=' object-scale-down w-32 h-24'/>
-          <div className='absolute top-0 right-0 pr-[10%] text-3xl'>
-            <IoIosHeartEmpty className='my-[50%] hover:text-white hover:bg-red-500 p-[10%] rounded-full'/>
-            <IoBagOutline className='hidden group-hover:block my-[50%] hover:text-white hover:bg-red-500 group-hover:p-[10%] rounded-full '/>
-            <IoEyeOutline className='hidden group-hover:block my-[50%]  hover:text-white hover:bg-red-500 group-hover:p-[10%] rounded-full'/>
-          </div>
         </div>
         <div className='md:pt-[5%] lg:pt-[15%]'>
           <p className='text-red-500'>{props?.data?.brand}</p>

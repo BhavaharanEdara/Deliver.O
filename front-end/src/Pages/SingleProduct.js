@@ -9,8 +9,9 @@ import { base_url } from '../Utils/base_url';
 import { config } from '../Utils/headerConfig';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { addProductToCart } from '../Features/cart/CartSlice';
+import { addProductToCart, deleteProductFromCart } from '../Features/cart/CartSlice';
 import * as Yup from 'yup';
+import { removeFromWishList } from '../Features/auth/AuthSlice';
 let schema = Yup.object().shape({
     star: Yup.string().required("Star is required"),
     comment: Yup.string().required("comment is required"),
@@ -25,9 +26,24 @@ function SingleProduct() {
     const [displayImage, setDisplayImage] = useState(false);
     const [quantity, SetQuantity] = useState(1);
     const [color, SetColor] = useState("");
-    const user = JSON.parse(localStorage.getItem("user"));
-    const [wishlist,setWishlist] = useState(user?.findUser?.wishlist);
+    const [avgRating, setAvgRating] = useState(0);
+    const user = useSelector(state=>state?.auth?.user?.findUser);
+    const cartProducts = useSelector(state=>state.cart?.cart?.Products);
+    const s = cartProducts.some(prod=>prod.Product===id) 
     const dispatch = useDispatch();
+    const formatDate = (givendate)=>{
+        const date = new Date(givendate);
+        const months = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+      
+        const day = date.getDate(); 
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+      
+        return `${day}-${month}-${year}`;
+      }
     const formik = useFormik({
         initialValues: {
             star: 1,
@@ -39,12 +55,12 @@ function SingleProduct() {
             try {
                 const response = await axios.put(
                   `${base_url}/product/rate`,
-                  { ...values },
+                  { ...values , postedOn: Date.now()},
                   config
                 );
-          
-                if (response.status === 201) {
+                if (response.status === 200) {
                   alert("Review Added Successfully");
+                  getProduct();
                 } else {
                   alert("Something went wrong");
                 }
@@ -54,16 +70,27 @@ function SingleProduct() {
     }});
         
     const handleWishlist = async()=>{
-        const response = await axios.put(`${base_url}/product/addWishlist`,{productId:id},config);
-        setWishlist(response?.data?.wishlist);
-        const user = {findUser:response.data};
-        localStorage.setItem("user", JSON.stringify(user));
+        dispatch(removeFromWishList({_id:id}))
     }
     const getProduct = async()=>{
+        try{
         const response = await axios.get(`${base_url}/product/getProduct/${id}`);
+        if(response?.data?.ratings?.length==0){
+            setAvgRating(0);
+        }
+        else{
+            const length = response?.data?.ratings?.length;
+            const average = response?.data?.ratings?.reduce((acc,curr)=>acc+(curr.star/length),0);
+            setAvgRating(average)
+            console.log(average);
+        }
+        
         setProductDetails(response?.data);
         setDisplayImage(response?.data?.images[0]?.url);
-        SetColor(response?.data?.colour[0]);
+        SetColor(response?.data?.colour[0]);}
+        catch(error){
+            alert("Server Issue");
+        }
     }
     useEffect(()=>{
         getProduct();
@@ -129,11 +156,11 @@ function SingleProduct() {
                         </div>
                     </div>
                     <div className='flex gap-5 py-2'>
-                        <Link className='text-white rounded-full text-center font-semibold bg-green-600 px-5 text-[80%] sm:text-[100%] sm:px-5 py-2 my-3 w-fill border-2 border-green-600 hover:bg-white hover:text-green-600 ' onClick={()=>{const res = dispatch(addProductToCart({Product:id, count:quantity, color:color, price:productDetails?.price}));}}>Add to Cart</Link>
+                        {cartProducts.some(prod=>prod.Product===id) ? <Link className='text-white rounded-full text-center font-semibold bg-green-600 px-5 text-[80%] sm:text-[100%] sm:px-5 py-2 my-3 w-fill border-2 border-green-600 hover:bg-white hover:text-green-600 ' onClick={()=>{dispatch(deleteProductFromCart({Product:id, count:quantity, color:color, price:productDetails?.price}));}}>Remove from Cart</Link>:<Link className='text-white rounded-full text-center font-semibold bg-green-600 px-5 text-[80%] sm:text-[100%] sm:px-5 py-2 my-3 w-fill border-2 border-green-600 hover:bg-white hover:text-green-600 ' onClick={()=>{const res = dispatch(addProductToCart({Product:id, count:quantity, color:color, price:productDetails?.price}));}}>Add to Cart</Link>}
                     </div>
                     <div className='font-semibold text-gray-600 flex gap-1 items-center mb-4 py-2 border-y-2 border-gray-300'>
                         <div className='w-full'>
-                            { wishlist?.some(item=>item===id) ? 
+                            { user?.wishlist?.some(item=>item===id) ? 
                                 <div className='flex gap-2'>
                                     <IoIosHeart className='text-xl text-red-500 hover:cursor-pointer' onClick={()=>{handleWishlist()}}/>
                                     <h3 className='text-[80%] sm:text-sm font-medium ' >Remove from Wishlist</h3>
@@ -157,14 +184,16 @@ function SingleProduct() {
             <div className='bg-white p-[2.5%] mx-2 rounded-lg shadow-xl'>
                 <div className='pb-3 '>
                     <h3 className='text-[80%] sm:text-lg font-semibold'>Customer Reviews</h3>
+                    {console.log(avgRating)}
                     <div className='flex items-center'>
-                        <ReactStars className=""
+                        <ReactStars className="me-3"
                         count={5}
                         size={24}
                         edit ={false}
-                        value={productDetails?.totalRating}
+                        value={avgRating}
                         activeColor="#ffd700" />
-                        <span className='text-[80%] sm:text-md'>By {productDetails?.ratings?.length} customers</span>
+                        <span className='ms-3'>{avgRating}</span>
+                        <span className='ms-3 text-[80%] sm:text-md'>By {productDetails?.ratings?.length} customers</span>
                     </div>
                 </div>
                 
@@ -202,7 +231,7 @@ function SingleProduct() {
                                 edit ={false}
                                 value={ele?.star}
                                 activeColor="#ffd700" />
-                            <p className='text-sm font-bold ita'>{ele?.firstname} {ele?.lastname}<span className='text-sm font-semibold text-gray-700 italic'>on</span>{ele?.postedOn}</p>
+                            <p className='text-sm font-bold ita'>{ele?.firstname} {ele?.lastname}<span className='text-sm font-semibold text-gray-700 italic'> on </span>{formatDate(ele?.postedOn)}</p>
                             <p className='italic text-sm py-1 font-semibold text-gray-500'>{ele?.comment}</p>
                             <p className='italic text-end underline text-sm py-1 font-semibold text-gray-500'>Report as inapropriate</p>
                         </div>)})

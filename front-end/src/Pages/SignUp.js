@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
+import { base_url } from "../Utils/base_url";
 
 function validateEmail(email) {
   if (email.indexOf('@') === -1 || email.indexOf('.') === -1) {

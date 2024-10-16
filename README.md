@@ -1,7 +1,7 @@
 ﻿# Deliver.O
 This is a MERN stack application. It is an e-commerse application whith features like user authentication, product filtering, cart, wishlist, orders along with a dedicated admin panel.
 
-Website URL :- https://66f4e3479f4c78565cec635b--heartfelt-puppy-22120a.netlify.app/
+Website URL :- https://fanciful-cupcake-74190a.netlify.app/
 ## Table of Contents
 
 1. [Installation](#installation)

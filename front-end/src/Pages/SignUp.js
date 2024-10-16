@@ -48,7 +48,7 @@ function SignUp() {
           }
           else{
             setFilled(true);
-            const res = await axios.post("http://localhost:5000/auth/signup",data)
+            const res = await axios.post(`${base_url}/auth/signup`,data)
             console.log(res);
             if(res.status==200){
               navigate('/login')
